@@ -12,6 +12,8 @@ os.environ.pop("DYLD_LIBRARY_PATH", None)
 
 USERNAME = os.environ.get("USERNAME")
 PASSWORD = os.environ.get("PASSWORD")
+MIN_TOPICS = int(os.environ.get("MIN_TOPICS", "20"))  # 默认最少访问20个主题
+MAX_TOPICS = int(os.environ.get("MAX_TOPICS", "30"))  # 默认最多访问30个主题
 
 HOME_URL = "https://linux.do/"
 
@@ -44,12 +46,16 @@ class LinuxDoBrowser:
 
     def click_topic(self):
         topic_list = self.page.query_selector_all("#list-area .title")
-        logger.info(f"Click {len(topic_list)} topics")
-        for topic in topic_list:
+        # 在最小值和最大值之间随机选择要访问的主题数量
+        target_topics = random.randint(MIN_TOPICS, MAX_TOPICS)
+        total_topics = min(len(topic_list), target_topics)
+        logger.info(f"Will click {total_topics} topics (random between {MIN_TOPICS}-{MAX_TOPICS})")
+        
+        for topic in topic_list[:total_topics]:
             logger.info("Click topic: " + topic.get_attribute("href"))
             page = self.context.new_page()
             page.goto(HOME_URL + topic.get_attribute("href"))
-            if random.random() < 0.3:  # 0.3 * 30 = 9
+            if random.random() < 0.3:
                 self.click_like(page)
             self.browse_post(page)
             page.close()

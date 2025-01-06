@@ -1,17 +1,21 @@
 # LinuxDo 每日签到（每日打卡）
 
 ## 项目描述
+
 这个项目用于自动登录 [LinuxDo](https://linux.do/) 网站并随机读取几个帖子。它使用 Python 和 Playwright 自动化库模拟浏览器登录并浏览帖子，以达到自动签到的功能。
 
 ## 功能
+
 - 自动登录 LinuxDo。
 - 自动浏览帖子。
 - 每天在 GitHub Actions 中自动运行。
 
 ## 如何使用
-本节只介绍在github actions中如何使用。在进行之前需要先fork本项目。
+
+本节只介绍在 github actions 中如何使用。在进行之前需要先 fork 本项目。
 
 ### 设置环境变量
+
 在使用此自动化脚本之前，需要在 GitHub 仓库中配置两个环境变量 `USERNAME` 和 `PASSWORD`，这两个变量将用于登录 LinuxDo。按照以下步骤设置：
 
 1. 登录 GitHub，进入你的项目仓库。
@@ -22,8 +26,18 @@
    - 在 `Name` 字段中输入 `USERNAME`，在 `Value` 字段中输入你的 LinuxDo 用户名或者邮箱。
    - 重复上述步骤，这次输入 `PASSWORD` 作为 `Name`，相应的密码作为 `Value`。
 
+在 GitHub 仓库中配置以下环境变量：
+
+- `USERNAME`：LinuxDo 用户名或邮箱
+- `PASSWORD`：LinuxDo 密码
+- `MIN_TOPICS`：（可选）每次运行最少访问的主题数量，默认为 20
+- `MAX_TOPICS`：（可选）每次运行最多访问的主题数量，默认为 30
+
+脚本会在设定的最小值和最大值之间随机选择访问主题的数量。如果不设置这两个变量，将使用默认值（20-30 之间随机）。
+
 ### GitHub Actions 自动运行
-此项目的 GitHub Actions 配置会自动每天 UTC 时间1点运行签到脚本。你无需进行任何操作即可启动此自动化任务。GitHub Actions 的工作流文件位于 `.github/workflows` 目录下，文件名为 `daily-check-in.yml`。
+
+此项目的 GitHub Actions 配置会自动每天 UTC 时间 1 点运行签到脚本。你无需进行任何操作即可启动此自动化任务。GitHub Actions 的工作流文件位于 `.github/workflows` 目录下，文件名为 `daily-check-in.yml`。
 
 如果你需要手动触发此工作流，可以通过以下步骤操作：
 
@@ -34,6 +48,7 @@
 ## 运行结果
 
 ### 网页中查看
+
 `Actions`栏 -> 点击最新的`Daily Check-in` workflow run -> `run_script` -> `Execute script`
 
 可看到`Connect Info`：
@@ -45,10 +60,12 @@
 可选功能：配置 Telegram 通知，实时获取签到结果。
 
 需要在 GitHub Secrets 中配置：
+
 - `TELEGRAM_TOKEN`：Telegram Bot Token
 - `TELEGRAM_USERID`：Telegram 用户 ID
 
 获取方法：
+
 1. Bot Token：与 [@BotFather](https://t.me/BotFather) 对话创建机器人获取
 2. 用户 ID：与 [@userinfobot](https://t.me/userinfobot) 对话获取
 
