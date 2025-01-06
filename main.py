@@ -46,19 +46,27 @@ class LinuxDoBrowser:
 
     def click_topic(self):
         topic_list = self.page.query_selector_all("#list-area .title")
-        # 在最小值和最大值之间随机选择要访问的主题数量
         target_topics = random.randint(MIN_TOPICS, MAX_TOPICS)
         total_topics = min(len(topic_list), target_topics)
         logger.info(f"Will click {total_topics} topics (random between {MIN_TOPICS}-{MAX_TOPICS})")
         
-        for topic in topic_list[:total_topics]:
-            logger.info("Click topic: " + topic.get_attribute("href"))
-            page = self.context.new_page()
-            page.goto(HOME_URL + topic.get_attribute("href"))
-            if random.random() < 0.3:
-                self.click_like(page)
-            self.browse_post(page)
-            page.close()
+        visited_count = 0  # 添加计数器
+        for topic in topic_list:
+            if visited_count >= total_topics:  # 达到目标数量后退出
+                break
+                
+            try:
+                logger.info("Click topic: " + topic.get_attribute("href"))
+                page = self.context.new_page()
+                page.goto(HOME_URL + topic.get_attribute("href"), timeout=60000)
+                if random.random() < 0.3:
+                    self.click_like(page)
+                self.browse_post(page)
+                visited_count += 1  # 成功访问后增加计数
+            except Exception as e:
+                logger.error(f"访问主题失败: {str(e)}")
+            finally:
+                page.close()
 
     def browse_post(self, page):
         prev_url = None
